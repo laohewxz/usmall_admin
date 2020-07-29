@@ -1,5 +1,14 @@
 import axios from "axios"
 import qs from "qs"
+import store from "../store"
+
+//请求拦截
+axios.interceptors.request.use(config => {
+    if (config.url != baseUrl + '/api/userlogin') {
+        config.headers.authorization = store.state.user.token;
+    }
+    return config
+})
 
 //响应拦截
 axios.interceptors.response.use(res => {
@@ -12,46 +21,46 @@ axios.interceptors.response.use(res => {
 const baseUrl = "/api"
 
 //菜单添加 
-export const requestMenuAdd=(params)=>{
+export const requestMenuAdd = (params) => {
     return axios({
-        url:baseUrl+"/api/menuadd",
-        method:'post',
-        data:qs.stringify(params)
+        url: baseUrl + "/api/menuadd",
+        method: 'post',
+        data: qs.stringify(params)
     })
 }
 
 //菜单列表
-export const requestMenuList=(params)=>{
+export const requestMenuList = (params) => {
     return axios({
-        url:baseUrl+"/api/menulist",
-        method:"get",
-        params:params
+        url: baseUrl + "/api/menulist",
+        method: "get",
+        params: params
     })
 }
 
 //请求一条数据
-export const requestMenuDetail=(params)=>{
+export const requestMenuDetail = (params) => {
     return axios({
-        url:baseUrl+"/api/menuinfo",
-        method:"get",
-        params:params
+        url: baseUrl + "/api/menuinfo",
+        method: "get",
+        params: params
     })
 }
 
 //菜单修改
-export const requestMenuUpdate = params=>{
+export const requestMenuUpdate = params => {
     return axios({
-        url:baseUrl+"/api/menuedit",
-        method:"post",
+        url: baseUrl + "/api/menuedit",
+        method: "post",
         data: qs.stringify(params)
-    }) 
+    })
 }
 
 //删除
-export const requestMenuDelete = params=>{
+export const requestMenuDelete = params => {
     return axios({
-        url:baseUrl+"/api/menudelete",
-        method:"post",
+        url: baseUrl + "/api/menudelete",
+        method: "post",
         data: qs.stringify(params)
     })
 }
@@ -60,47 +69,47 @@ export const requestMenuDelete = params=>{
 // ========================角色===============================
 
 //角色添加
-export const requestRoleAdd = (params)=>{
+export const requestRoleAdd = (params) => {
     return axios({
-        url:baseUrl+"/api/roleadd",
-        method:"post",
+        url: baseUrl + "/api/roleadd",
+        method: "post",
         data: qs.stringify(params)
     })
 }
 
 //角色列表
-export const requestRoleList = ()=>{
+export const requestRoleList = () => {
     return axios({
-        url:baseUrl+"/api/rolelist",
-        method:"get",
+        url: baseUrl + "/api/rolelist",
+        method: "get",
     })
 }
 
 //角色获取  一条
-export const requestRoleDetail = (params)=>{
+export const requestRoleDetail = (params) => {
     return axios({
-        url:baseUrl+"/api/roleinfo",
-        method:"get",
+        url: baseUrl + "/api/roleinfo",
+        method: "get",
         params
     })
 }
 
 
 //角色修改
-export const requestRoleUpdate = (params)=>{
+export const requestRoleUpdate = (params) => {
     return axios({
-        url:baseUrl+"/api/roleedit",
-        method:"post",
+        url: baseUrl + "/api/roleedit",
+        method: "post",
         data: qs.stringify(params)
     })
 }
 
 
 //角色删除
-export const requestRoleDelete = (params)=>{
+export const requestRoleDelete = (params) => {
     return axios({
-        url:baseUrl+"/api/roledelete",
-        method:"post",
+        url: baseUrl + "/api/roledelete",
+        method: "post",
         data: qs.stringify(params)
     })
 }
@@ -108,19 +117,19 @@ export const requestRoleDelete = (params)=>{
 //===============================管理员=================================
 
 //管理员添加
-export const requestManageAdd = (params)=>{
+export const requestManageAdd = (params) => {
     return axios({
-        url:baseUrl+"/api/useradd",
-        method:"post",
+        url: baseUrl + "/api/useradd",
+        method: "post",
         data: qs.stringify(params)
     })
 }
 
 //管理员列表
-export const requestManageList = (params)=>{
+export const requestManageList = (params) => {
     return axios({
-        url:baseUrl+"/api/userlist",
-        method:"get",
+        url: baseUrl + "/api/userlist",
+        method: "get",
         params
     })
 }
@@ -134,20 +143,20 @@ export const requestManageDetail = (params) => axios({
 
 
 //管理员修改
-export const requestManageUpdate = (params)=>{
+export const requestManageUpdate = (params) => {
     return axios({
-        url:baseUrl+"/api/useredit",
-        method:"post",
+        url: baseUrl + "/api/useredit",
+        method: "post",
         data: qs.stringify(params)
     })
 }
 
 
 //管理员删除
-export const requestManageDelete = (params)=>{
+export const requestManageDelete = (params) => {
     return axios({
-        url:baseUrl+"/api/userdelete",
-        method:"post",
+        url: baseUrl + "/api/userdelete",
+        method: "post",
         data: qs.stringify(params)
     })
 }
@@ -159,10 +168,10 @@ export const requestManageCount = () => axios({
 })
 
 //管理员登录
-export const requestLogin = (params)=>{
+export const requestLogin = (params) => {
     return axios({
-        url:baseUrl+"/api/userlogin",
-        method:"post",
+        url: baseUrl + "/api/userlogin",
+        method: "post",
         data: qs.stringify(params)
     })
 }
@@ -182,85 +191,85 @@ export const requestMemberDetail = (params) => axios({
 })
 
 //会员修改
-export const requestMemberUpdate=(params)=>{
+export const requestMemberUpdate = (params) => {
     return axios({
-        url:baseUrl+"/api/memberedit",
-        method:"post",
-        data:qs.stringify(params)
+        url: baseUrl + "/api/memberedit",
+        method: "post",
+        data: qs.stringify(params)
     })
 }
 
 //========================================商品分类===============================================
 //商品分类添加
-export const requestCateAdd = (params)=>{
+export const requestCateAdd = (params) => {
     var formData = new FormData()
-    for(let i in params){
-        formData.append(i,params[i])
+    for (let i in params) {
+        formData.append(i, params[i])
     }
     return axios({
-        url:baseUrl+"/api/cateadd",
-        method:"post",
+        url: baseUrl + "/api/cateadd",
+        method: "post",
         data: formData
     })
 }
 
 //商品分类列表
-export const requestCateList = (params)=>{
+export const requestCateList = (params) => {
     return axios({
-        url:baseUrl+"/api/catelist",
-        method:"get",
+        url: baseUrl + "/api/catelist",
+        method: "get",
         params
     })
 }
 
 //商品分类获取  一条
-export const requestCateDetail = (params)=>{
+export const requestCateDetail = (params) => {
     return axios({
-        url:baseUrl+"/api/cateinfo",
-        method:"get",
+        url: baseUrl + "/api/cateinfo",
+        method: "get",
         params
     })
 }
 
 
 //商品分类修改
-export const requestCateUpdate = (params)=>{
+export const requestCateUpdate = (params) => {
     var formData = new FormData()
-    for(let i in params){
-        formData.append(i,params[i])
+    for (let i in params) {
+        formData.append(i, params[i])
     }
     return axios({
-        url:baseUrl+"/api/cateedit",
-        method:"post",
+        url: baseUrl + "/api/cateedit",
+        method: "post",
         data: formData
     })
 }
 
 
 //商品分类删除
-export const requestCateDelete = (params)=>{
+export const requestCateDelete = (params) => {
     return axios({
-        url:baseUrl+"/api/catedelete",
-        method:"post",
+        url: baseUrl + "/api/catedelete",
+        method: "post",
         data: qs.stringify(params)
     })
 }
 
 //====================================商品规格========================================
 //商品规格添加
-export const requestSpecAdd = (params)=>{
+export const requestSpecAdd = (params) => {
     return axios({
-        url:baseUrl+"/api/specsadd",
-        method:"post",
+        url: baseUrl + "/api/specsadd",
+        method: "post",
         data: qs.stringify(params)
     })
 }
 
 //商品规格列表
-export const requestSpecList = (params)=>{
+export const requestSpecList = (params) => {
     return axios({
-        url:baseUrl+"/api/specslist",
-        method:"get",
+        url: baseUrl + "/api/specslist",
+        method: "get",
         params
     })
 }
@@ -274,20 +283,20 @@ export const requestSpecDetail = (params) => axios({
 
 
 //商品规格修改
-export const requestSpecUpdate = (params)=>{
+export const requestSpecUpdate = (params) => {
     return axios({
-        url:baseUrl+"/api/specsedit",
-        method:"post",
+        url: baseUrl + "/api/specsedit",
+        method: "post",
         data: qs.stringify(params)
     })
 }
 
 
 //商品规格删除
-export const requestSpecDelete = (params)=>{
+export const requestSpecDelete = (params) => {
     return axios({
-        url:baseUrl+"/api/specsdelete",
-        method:"post",
+        url: baseUrl + "/api/specsdelete",
+        method: "post",
         data: qs.stringify(params)
     })
 }
@@ -304,23 +313,23 @@ export const requestSpecCount = () => axios({
 
 
 //商品添加
-export const requestGoodsAdd = (params)=>{
+export const requestGoodsAdd = (params) => {
     let formData = new FormData()
-    for(let i in params){
-        formData.append(i,params[i])
+    for (let i in params) {
+        formData.append(i, params[i])
     }
     return axios({
-        url:baseUrl+"/api/goodsadd",
-        method:"post",
+        url: baseUrl + "/api/goodsadd",
+        method: "post",
         data: formData
     })
 }
 
 //商品列表
-export const requestGoodsList = (params)=>{
+export const requestGoodsList = (params) => {
     return axios({
-        url:baseUrl+"/api/goodslist",
-        method:"get",
+        url: baseUrl + "/api/goodslist",
+        method: "get",
         params
     })
 }
@@ -334,24 +343,24 @@ export const requestGoodsDetail = (params) => axios({
 
 
 //商品修改
-export const requestGoodsUpdate = (params)=>{
+export const requestGoodsUpdate = (params) => {
     let formData = new FormData()
-    for(let i in params){
-        formData.append(i,params[i])
+    for (let i in params) {
+        formData.append(i, params[i])
     }
     return axios({
-        url:baseUrl+"/api/goodsedit",
-        method:"post",
-        data:formData
+        url: baseUrl + "/api/goodsedit",
+        method: "post",
+        data: formData
     })
 }
 
 
 //商品删除
-export const requestGoodsDelete = (params)=>{
+export const requestGoodsDelete = (params) => {
     return axios({
-        url:baseUrl+"/api/goodsdelete",
-        method:"post",
+        url: baseUrl + "/api/goodsdelete",
+        method: "post",
         data: qs.stringify(params)
     })
 }
@@ -361,4 +370,107 @@ export const requestGoodsCount = () => axios({
     url: baseUrl + "/api/goodscount",
     method: "get",
 })
+
+//================================轮播图管理=================================
+//轮播图添加
+export const requestBannerAdd = (params) => {
+    var formData = new FormData()
+    for (let i in params) {
+        formData.append(i, params[i])
+    }
+    return axios({
+        url: baseUrl + "/api/banneradd",
+        method: "post",
+        data: formData
+    })
+}
+
+//轮播图列表
+export const requestBannerList = (params) => {
+    return axios({
+        url: baseUrl + "/api/bannerlist",
+        method: "get",
+        params
+    })
+}
+
+//轮播图获取  一条
+export const requestBannerDetail = (params) => {
+    return axios({
+        url: baseUrl + "/api/bannerinfo",
+        method: "get",
+        params
+    })
+}
+
+
+//轮播图修改
+export const requestBannerUpdate = (params) => {
+    var formData = new FormData()
+    for (let i in params) {
+        formData.append(i, params[i])
+    }
+    return axios({
+        url: baseUrl + "/api/banneredit",
+        method: "post",
+        data: formData
+    })
+}
+
+
+//轮播图删除
+export const requestBannerDelete = (params) => {
+    return axios({
+        url: baseUrl + "/api/bannerdelete",
+        method: "post",
+        data: qs.stringify(params)
+    })
+}
+
+
+//==============================秒杀活动=========================================
+//秒杀活动添加
+export const requestSeckillAdd = (params) => {
+    return axios({
+        url: baseUrl + "/api/seckadd",
+        method: "post",
+        data: qs.stringify(params)
+    })
+}
+
+//秒杀活动列表
+export const requestSeckillList = (params) => {
+    return axios({
+        url: baseUrl + "/api/secklist",
+        method: "get",
+        params
+    })
+}
+
+//秒杀活动获取  一条
+export const requestSeckillDetail = (params) => axios({
+    url: baseUrl + "/api/seckinfo",
+    method: "get",
+    params
+})
+
+
+//秒杀活动修改
+export const requestSeckillUpdate = (params) => {
+    return axios({
+        url: baseUrl + "/api/seckedit",
+        method: "post",
+        data: qs.stringify(params)
+    })
+}
+
+
+//秒杀活动删除
+export const requestSeckillDelete = (params) => {
+    return axios({
+        url: baseUrl + "/api/seckdelete",
+        method: "post",
+        data: qs.stringify(params)
+    })
+}
 

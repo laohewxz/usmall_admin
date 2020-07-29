@@ -33,7 +33,8 @@ export default {
         if (res.data.code == 200) {
           successAlert(res.data.msg);
           this.changeUser(res.data.list)//vuex保存信息
-          this.$router.push("/");
+          console.log('1111')
+          this.$router.push("/home");
         }else{
           warningAlert(res.data.msg)
         }

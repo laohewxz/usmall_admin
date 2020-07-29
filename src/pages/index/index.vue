@@ -15,37 +15,31 @@
             <i class="el-icon-menu"></i>
             <span slot="title">首页</span>
           </el-menu-item>
-          <el-submenu index="1">
+
+          <!-- 有目录的循环 -->
+          <el-submenu :index="item.id+''" v-for="item in user.menus" :key="item.id+''"  v-show="haschildren">
             <template slot="title">
-              <i class="el-icon-location"></i>
-              <span>系统设置</span>
+              <i :class="item.icon"></i>
+              <span>{{item.title}}</span>
             </template>
-            <el-menu-item index="/menu">菜单管理</el-menu-item>
-            <el-menu-item index="/role">角色管理</el-menu-item>
-            <el-menu-item index="/manage">管理员管理</el-menu-item>
+            <el-menu-item :index="i.url" v-for="(i) in item.children" :key="i.title">{{i.title}}</el-menu-item>
           </el-submenu>
 
-          <el-submenu index="2">
-            <template slot="title">
-              <i class="el-icon-location"></i>
-              <span>商城管理</span>
-            </template>
-            <el-menu-item index="/cate">商品分类</el-menu-item>
-            <el-menu-item index="/spec">商品规格</el-menu-item>
-            <el-menu-item index="/goods">商品管理</el-menu-item>
-            <el-menu-item index="/member">会员管理</el-menu-item>
-            <el-menu-item index="/banner">轮播图管理</el-menu-item>
-            <el-menu-item index="/seckill">秒杀活动</el-menu-item>
-          </el-submenu>
+          <!-- 没有目录 -->
+         <el-menu-item v-show="!haschildren"  :index="i.url" v-for="(i) in user.menus" :key="i.title">
+            <span slot="title">{{i.title}}</span>
+          </el-menu-item>
+
         </el-menu>
+
         <!-- 导航结束 -->
       </el-aside>
       <el-container>
-        <el-header >
-         <div class="div">
-            <span></span>
-            <el-button type="primary">退出</el-button>
-         </div>
+        <el-header>
+          <div class="div">
+            <span>{{user.username}}</span>
+            <el-button type="primary" @click="exit">退出</el-button>
+          </div>
         </el-header>
         <el-main>
           <!-- ----- -->
@@ -62,25 +56,37 @@
 </template>
 
 <script>
-import {mapGetters} from "vuex"
+import { mapGetters, mapActions } from "vuex";
 export default {
-  computed:{
+  computed: {
     ...mapGetters({
-      user:"user"
-    })
+      user: "user",
+    }),
+    haschildren() {
+      console.log(this.user.menus[0].children ? true : false,'ppppppppppppppppppppppp')
+      return this.user.menus[0].children ? true : false;
+    },
   },
-  mounted(){
-    console.log(this.user)
-  }
+  methods: {
+    ...mapActions({
+      changeUser: "changeUser",
+    }),
+    exit() {
+      this.changeUser(null);
+      this.$router.push("/login");
+    },
+  },
+  mounted() {
+  },
 };
 </script>
 
 <style scoped>
-.div{
+.div {
   padding-top: 10px;
   float: right;
 }
-.nav{
+.nav {
   margin-bottom: 20px;
 }
 .out {

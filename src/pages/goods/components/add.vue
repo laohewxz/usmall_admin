@@ -112,8 +112,8 @@ export default {
         first_cateid: "",
         second_cateid: "",
         goodsname: "",
-        price: 0,
-        market_price: 0,
+        price: null,
+        market_price: null,
         img: null,
         description: "",
         specsid: "",
@@ -136,6 +136,7 @@ export default {
       this.requestCateList();
     }
     this.requestSpecList(true);
+    // console.log(this.secondCaterArr,'pppppppppppppppppppppppppppppppppppppp')s
   },
   methods: {
     //修改了一级分类
@@ -148,13 +149,14 @@ export default {
     },
 
     //修改了商规格
-    changeSpecsId() {
+    changeSpecsId(bool) {
       let index = this.specList.findIndex(
         (item) => item.id == this.form.specsid
       );
-      this.form.specsattr=""
       var nArr = this.specList[index].attrs;
       this.attrsArr = JSON.parse(nArr);
+     
+       
     },
     ...mapActions({
       requestRoleList: "role/requestList",
@@ -185,8 +187,10 @@ export default {
         this.form = res.data.list;
         this.form.id = id;
         this.imageUrl = this.$imgPre + this.form.img;
-        this.form.specsattr = JSON.parse(this.form.specsattr);
-        console.log(this.form)
+        this.form.specsattr=JSON.parse(this.form.specsattr)
+        console.log(this.form.specsattr,'ooooooooooooooooooooooooooooooooooooooo')
+        this.changeFirstCateId()
+        this.changeSpecsId(true)
       });
     },
 
@@ -199,8 +203,8 @@ export default {
         first_cateid: "",
         second_cateid: "",
         goodsname: "",
-        price: 0,
-        market_price: 0,
+        price: null,
+        market_price: null,
         img: null,
         description: "",
         specsid: "",
@@ -230,6 +234,7 @@ export default {
     add() {
       this.form.description = this.editor.txt.html();
        this.form.specsattr = JSON.stringify(this.form.specsattr )
+       console.log(this.form,'pppppp')
       requestGoodsAdd(this.form).then((res) => {
         if (res.data.code == 200) {
           successAlert(res.data.msg);

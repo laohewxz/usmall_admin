@@ -26,10 +26,15 @@ const mutations = {
 
 const actions = {
     //获取列表数据
-    requestList(context) {
-        const params = {
-            page: context.state.page,
-            size: context.state.size
+    requestList(context,bool) {
+        var params = {}
+        if(bool){
+            params = {}
+        }else{
+            params = {
+                page: context.state.page,
+                size: context.state.size
+            }
         }
         requestGoodsList(params).then(res => {
             if(!res.data.list&&context.state.page>1){
