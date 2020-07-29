@@ -5,6 +5,7 @@ import qs from "qs"
 axios.interceptors.response.use(res => {
     console.group("本次路径：" + res.config.url)
     console.log(res)
+    console.groupEnd()
     return res
 })
 
@@ -296,3 +297,68 @@ export const requestSpecCount = () => axios({
     url: baseUrl + "/api/specscount",
     method: "get",
 })
+
+
+
+//==========================商品=============================
+
+
+//商品添加
+export const requestGoodsAdd = (params)=>{
+    let formData = new FormData()
+    for(let i in params){
+        formData.append(i,params[i])
+    }
+    return axios({
+        url:baseUrl+"/api/goodsadd",
+        method:"post",
+        data: formData
+    })
+}
+
+//商品列表
+export const requestGoodsList = (params)=>{
+    return axios({
+        url:baseUrl+"/api/goodslist",
+        method:"get",
+        params
+    })
+}
+
+//商品获取  一条
+export const requestGoodsDetail = (params) => axios({
+    url: baseUrl + "/api/goodsinfo",
+    method: "get",
+    params
+})
+
+
+//商品修改
+export const requestGoodsUpdate = (params)=>{
+    let formData = new FormData()
+    for(let i in params){
+        formData.append(i,params[i])
+    }
+    return axios({
+        url:baseUrl+"/api/goodsedit",
+        method:"post",
+        data:formData
+    })
+}
+
+
+//商品删除
+export const requestGoodsDelete = (params)=>{
+    return axios({
+        url:baseUrl+"/api/goodsdelete",
+        method:"post",
+        data: qs.stringify(params)
+    })
+}
+
+//商品总数
+export const requestGoodsCount = () => axios({
+    url: baseUrl + "/api/goodscount",
+    method: "get",
+})
+

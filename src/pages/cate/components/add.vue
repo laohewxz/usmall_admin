@@ -18,10 +18,10 @@
           <el-input v-model="form.catename" autocomplete="off"></el-input>
         </el-form-item>
 
-        <el-form-item label="图片" :label-width="formLabelWidth">
+        <el-form-item label="图片" :label-width="formLabelWidth" v-if="form.pid!==0" >
           <el-upload
             class="avatar-uploader"
-            action="https://jsonplaceholder.typicode.com/posts/"
+            action="#"
             :show-file-list="false"
             :on-change="changeImg"
           >
@@ -103,12 +103,11 @@ export default {
     empty() {
       this.form = {
         pid: 0,
-        title: "",
-        icon: "",
-        type: 1,
-        url: "",
+        catename: "",
+        img: null,
         status: 1,
       };
+      this.imgUrl = "";
     },
     cancel() {
       this.info.show = false;
@@ -145,17 +144,17 @@ export default {
 };
 </script>
 
-<style>
- .avatar-uploader .el-upload {
+<style scoped lang="stylus">
+.add >>> .el-upload {
    position: relative;
-    border: 1px dashed #d9d9d9; 
+    border: 1px dashed #d9d9d9 !important; 
     border-radius: 6px;
     cursor: pointer;
     position: relative;
     overflow: hidden;
   }
-  .avatar-uploader .el-upload:hover {
-    border-color: #409EFF;
+  .add >>> .el-upload:hover {
+    border-color: #409EFF !important;
   }
   .avatar-uploader-icon {
     font-size: 28px;

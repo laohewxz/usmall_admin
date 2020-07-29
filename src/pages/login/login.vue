@@ -14,6 +14,7 @@
 <script>
 import { requestLogin } from "../../util/request";
 import { successAlert, warningAlert } from "../../util/alert";
+import{mapActions,mapGetters} from "vuex"
 export default {
   data() {
     return {
@@ -24,10 +25,14 @@ export default {
     };
   },
   methods: {
+    ...mapActions({
+      changeUser:"changeUser"
+    }),
     login() {
       requestLogin(this.user).then((res) => {
         if (res.data.code == 200) {
           successAlert(res.data.msg);
+          this.changeUser(res.data.list)//vuex保存信息
           this.$router.push("/");
         }else{
           warningAlert(res.data.msg)

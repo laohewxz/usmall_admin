@@ -41,7 +41,12 @@
         <!-- 导航结束 -->
       </el-aside>
       <el-container>
-        <el-header>Header</el-header>
+        <el-header >
+         <div class="div">
+            <span></span>
+            <el-button type="primary">退出</el-button>
+         </div>
+        </el-header>
         <el-main>
           <!-- ----- -->
           <el-breadcrumb separator-class="el-icon-arrow-right" class="nav">
@@ -57,10 +62,24 @@
 </template>
 
 <script>
-export default {};
+import {mapGetters} from "vuex"
+export default {
+  computed:{
+    ...mapGetters({
+      user:"user"
+    })
+  },
+  mounted(){
+    console.log(this.user)
+  }
+};
 </script>
 
 <style scoped>
+.div{
+  padding-top: 10px;
+  float: right;
+}
 .nav{
   margin-bottom: 20px;
 }

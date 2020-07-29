@@ -1,4 +1,4 @@
-import { requestSpecList, requestSpecCount } from "../../util/request"
+import { requestGoodsList, requestGoodsCount } from "../../util/request"
 
 const state = {
     list: [],
@@ -26,21 +26,16 @@ const mutations = {
 
 const actions = {
     //获取列表数据
-    requestList(context,bool) {
-        var params = {}
-        if(bool){
-            params = {}
-        }else{
-            params = {
-                page: context.state.page,
-                size: context.state.size
-            }
+    requestList(context) {
+        const params = {
+            page: context.state.page,
+            size: context.state.size
         }
-       
-        requestSpecList(params).then(res => {
-            if(res.data.list.length==0&&context.state.page>1){
+        requestGoodsList(params).then(res => {
+            if(!res.data.list&&context.state.page>1){
                 context.commit("changePage",context.state.page-1);
                 context.dispatch("requestList")
+           
                 return;
             }
             context.commit("changeList", res.data.list)
@@ -48,7 +43,7 @@ const actions = {
     },
     //获取总数
     requestTotal(context) {
-        requestSpecCount().then((res) => {
+        requestGoodsCount().then((res) => {
             context.commit("changeTotal", res.data.list[0].total)
         })
     },
