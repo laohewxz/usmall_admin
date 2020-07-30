@@ -1,8 +1,8 @@
 <template>
   <div class="add">
     <el-dialog :title="info.title" :visible.sync="info.show">
-      <el-form :model="form">
-        <el-form-item label="活动名称" :label-width="formLabelWidth">
+      <el-form :model="form" :rules="rules" ref="form">
+        <el-form-item label="活动名称" :label-width="formLabelWidth" prop="title">
           <el-input v-model="form.title" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="活动期限" :label-width="formLabelWidth">
@@ -17,7 +17,7 @@
             ></el-date-picker>
           </div>
         </el-form-item>
-        <el-form-item label="一级分类" :label-width="formLabelWidth">
+        <el-form-item label="一级分类" :label-width="formLabelWidth" prop="first_cateid">
           <el-select v-model="form.first_cateid" @change="changeFirstCateId">
             <el-option label="--请选择--" value disabled></el-option>
             <el-option
@@ -28,7 +28,7 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="二级分类" :label-width="formLabelWidth">
+        <el-form-item label="二级分类" :label-width="formLabelWidth" prop="second_cateid">
           <el-select v-model="form.second_cateid" @change="second_">
             <el-option label="--请选择--" value disabled></el-option>
             <el-option
@@ -39,7 +39,7 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="商品" :label-width="formLabelWidth">
+        <el-form-item label="商品" :label-width="formLabelWidth" prop="goodsid">
           <el-select v-model="form.goodsid">
             <el-option label="--请选择--" value disabled></el-option>
             <el-option
@@ -57,8 +57,8 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="cancel()">取 消</el-button>
-        <el-button type="primary" @click="add" v-if="info.isAdd">添 加</el-button>
-        <el-button type="primary" v-else @click="update">修 改</el-button>
+        <el-button type="primary" @click="add('form')" v-if="info.isAdd">添 加</el-button>
+        <el-button type="primary" v-else @click="update('form')">修 改</el-button>
       </div>
     </el-dialog>
   </div>
@@ -87,13 +87,23 @@ export default {
         title: "",
         begintime: "",
         endtime: "",
-        first_cateid:null,
+        first_cateid: null,
         second_cateid: null,
         goodsid: null,
         status: 1,
       },
       value1: [],
       formLabelWidth: "120px",
+      rules: {
+        title: [{ required: true, message: "请输入活动名称", trigger: "blur" }],
+        first_cateid: [
+          { required: true, message: "请选择一级分类", trigger: "change" },
+        ],
+        second_cateid: [
+          { required: true, message: "请选择二级分类", trigger: "change" },
+        ],
+        goodsid: [{ required: true, message: "请选择商品", trigger: "change" }],
+      },
     };
   },
   computed: {
@@ -127,22 +137,22 @@ export default {
 
     //修改了二级分类
     second_() {
-      requestGoodsList({ fid: this.form.first_cateid, sid: this.form.second_cateid }).then((res)=>{
-        this.goodsArr=res.data.list
+      requestGoodsList({
+        fid: this.form.first_cateid,
+        sid: this.form.second_cateid,
+      }).then((res) => {
+        this.goodsArr = res.data.list;
       });
     },
 
-    changetime(t){//获取时间
-    console.log(t[0],'7777777777777777777777777777')
-      this.form.begintime= Date.parse(t[0])
-      this.form.endtime= Date.parse(t[1])
-        console.log(this.form.begintime,this.form.endtime,'uuuu')
-        
+    changetime(t) {
+      //获取时间
+      console.log(t[0], "7777777777777777777777777777");
+      this.form.begintime = Date.parse(t[0]);
+      this.form.endtime = Date.parse(t[1]);
+      console.log(this.form.begintime, this.form.endtime, "uuuu");
     },
 
-
-
-  
     //
     ...mapActions({
       requestRoleList: "role/requestList",
@@ -158,10 +168,12 @@ export default {
       requestSeckillDetail({ id: id }).then((res) => {
         this.form = res.data.list;
         this.form.id = id;
-        this.value1= [new Date(Number(this.form.begintime)),new Date(Number(this.form.endtime))]
+        this.value1 = [
+          new Date(Number(this.form.begintime)),
+          new Date(Number(this.form.endtime)),
+        ];
         this.changeFirstCateId();
-        this.second_()
-        
+        this.second_();
       });
     },
 
@@ -169,12 +181,12 @@ export default {
       this.secondCaterArr = []; //二级分类的数组
       this.attrsArr = []; //商品属性值
       this.imageUrl = ""; //图片地址
-       this.value1=[];
+      this.value1 = [];
       this.form = {
         title: "",
         begintime: "",
         endtime: "",
-        first_cateid:null,
+        first_cateid: null,
         second_cateid: null,
         goodsid: null,
         status: 1,
@@ -182,29 +194,43 @@ export default {
     },
 
     //修改
-    update() {
-      this.form.begintime= Number(this.form.begintime)
-      this.form.endtime= Number(this.form.endtime)
-      requestSeckillUpdate(this.form).then((res) => {
-        if (res.data.code == 200) {
-          successAlert(res.data.msg);
-          this.requestSeckillList();
-          this.cancel();
+    update(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.form.begintime = Number(this.form.begintime);
+          this.form.endtime = Number(this.form.endtime);
+          requestSeckillUpdate(this.form).then((res) => {
+            if (res.data.code == 200) {
+              successAlert(res.data.msg);
+              this.requestSeckillList();
+              this.cancel();
+            } else {
+              warningAlert(res.data.msg);
+            }
+          });
         } else {
-          warningAlert(res.data.msg);
+          console.log("error submit!!");
+          return false;
         }
       });
     },
 
     //添加
-    add() {
-      requestSeckillAdd(this.form).then((res) => {
-        if (res.data.code == 200) {
-          successAlert(res.data.msg);
-          this.cancel();
-          this.requestSeckillList();
+    add(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          requestSeckillAdd(this.form).then((res) => {
+            if (res.data.code == 200) {
+              successAlert(res.data.msg);
+              this.cancel();
+              this.requestSeckillList();
+            } else {
+              warningAlert(res.data.msg);
+            }
+          });
         } else {
-          warningAlert(res.data.msg);
+          console.log("error submit!!");
+          return false;
         }
       });
     },

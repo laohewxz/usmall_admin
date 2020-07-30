@@ -1,8 +1,8 @@
 <template>
   <div>
     <el-dialog :title="info.title" :visible.sync="info.show">
-      <el-form :model="form">
-        <el-form-item label="所属角色" :label-width="formLabelWidth">
+      <el-form :model="form"  :rules="rules" ref="form">
+        <el-form-item label="所属角色" :label-width="formLabelWidth" prop="roleid">
           <el-select v-model="form.roleid">
             <el-option label="--请选择--" value disabled></el-option>
             <el-option
@@ -13,10 +13,10 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="用户名" :label-width="formLabelWidth">
+        <el-form-item label="用户名" :label-width="formLabelWidth" prop="username">
           <el-input v-model="form.username" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="密码" :label-width="formLabelWidth">
+        <el-form-item label="密码" :label-width="formLabelWidth" prop="password">
           <el-input placeholder="请输入密码" v-model="form.password" show-password></el-input>
         </el-form-item>
         <el-form-item label="状态" label-width="120px">
@@ -25,8 +25,8 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="cancel()">取 消</el-button>
-        <el-button type="primary" @click="add" v-if="info.isAdd">添 加</el-button>
-        <el-button type="primary" v-else @click="update">修 改</el-button>
+        <el-button type="primary" @click="add('form')" v-if="info.isAdd">添 加</el-button>
+        <el-button type="primary" v-else @click="update('form')">修 改</el-button>
       </div>
     </el-dialog>
   </div>
@@ -53,6 +53,19 @@ export default {
         status: 1,
       },
       formLabelWidth: "120px",
+      rules: {
+        username: [
+          { required: true, message: "请输入用户名", trigger: "blur" },
+          { min: 2, max: 6, message: "长度在 2 到 6个字符", trigger: "blur" },
+        ],
+        password: [
+          { required: true, message: "请输密码", trigger: "blur" },
+          { min: 2, max: 12, message: "长度在 2 到 12个字符", trigger: "blur" },
+        ],
+         roleid: [
+            { required: true, message: '请选择活动区域', trigger: 'change' }
+          ],
+      },
     };
   },
   computed: {
@@ -67,7 +80,7 @@ export default {
     ...mapActions({
       requestRoleList: "role/requestList",
       requestManageList: "manage/requestList",
-      requestTotal:"manage/requestTotal"
+      requestTotal: "manage/requestTotal",
     }),
     getDetail(id) {
       //点击编辑获取一条书数据的详细信息
@@ -84,8 +97,9 @@ export default {
         status: 1,
       };
     },
-    update() {
-      requestManageUpdate(this.form).then((res) => {
+    update(formName) {
+       this.$refs[formName].validate((valid) => {
+          if (valid) {   requestManageUpdate(this.form).then((res) => {
         if (res.data.code == 200) {
           successAlert(res.data.msg);
           this.requestManageList();
@@ -94,20 +108,34 @@ export default {
           warningAlert(res.data.msg);
         }
       });
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
     },
 
-    add() {
+    add(formName) {
       //添加
-      requestManageAdd(this.form).then((res) => {
+
+       this.$refs[formName].validate((valid) => {
+          if (valid) {
+           requestManageAdd(this.form).then((res) => {
         if (res.data.code == 200) {
           successAlert(res.data.msg);
           this.cancel();
           this.requestManageList();
-          this.requestTotal()
+          this.requestTotal();
         } else {
           warningAlert(res.data.msg);
         }
       });
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+     
     },
     cancel() {
       //点击取消

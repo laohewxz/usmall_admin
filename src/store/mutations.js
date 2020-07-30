@@ -5,7 +5,11 @@ export const state = {
 export const mutations = {
     changeUser(state, user) {
         state.user = user
-        sessionStorage.setItem("user", JSON.stringify(state.user))
+        if(user){
+            sessionStorage.setItem("user", JSON.stringify(state.user))
+        }else{
+            sessionStorage.removeItem("user")//user为null就将user从sessionStorage里删除
+        }
     }
 }
 export const getters = {

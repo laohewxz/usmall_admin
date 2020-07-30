@@ -11,25 +11,39 @@
           text-color="#fff"
           active-text-color="#ffd04b"
         >
-          <el-menu-item index="2">
+          <el-menu-item index="/home">
             <i class="el-icon-menu"></i>
             <span slot="title">首页</span>
           </el-menu-item>
 
           <!-- 有目录的循环 -->
-          <el-submenu :index="item.id+''" v-for="item in user.menus" :key="item.id+''"  v-show="haschildren">
+          <!-- <el-submenu :index="item.id+''" v-for="item in user.menus" :key="item.id+''"  v-show="haschildren">
             <template slot="title">
               <i :class="item.icon"></i>
               <span>{{item.title}}</span>
             </template>
             <el-menu-item :index="i.url" v-for="(i) in item.children" :key="i.title">{{i.title}}</el-menu-item>
-          </el-submenu>
+          </el-submenu>-->
 
           <!-- 没有目录 -->
-         <el-menu-item v-show="!haschildren"  :index="i.url" v-for="(i) in user.menus" :key="i.title">
+          <!-- <el-menu-item v-show="!haschildren"  :index="i.url" v-for="(i) in user.menus" :key="i.title">
             <span slot="title">{{i.title}}</span>
-          </el-menu-item>
+          </el-menu-item>-->
 
+          <!-- 混合 -->
+          <template v-for="(item) in user.menus">
+            <el-submenu v-if="item.children" :index="item.id+''" :key="item.id">
+              <template slot="title">
+                <i :class="item.icon"></i>
+                <span>{{item.title}}</span>
+              </template>
+              <el-menu-item v-for="(i) in item.children" :key="i.title" :index="i.url">{{i.title}}</el-menu-item>
+            </el-submenu>
+
+            <el-menu-item v-if="!item.children" :key="item.id" :index="item.url">
+              <span slot="title">{{item.title}}</span>
+            </el-menu-item>
+          </template>
         </el-menu>
 
         <!-- 导航结束 -->
@@ -63,7 +77,10 @@ export default {
       user: "user",
     }),
     haschildren() {
-      console.log(this.user.menus[0].children ? true : false,'ppppppppppppppppppppppp')
+      console.log(
+        this.user.menus[0].children ? true : false,
+        "ppppppppppppppppppppppp"
+      );
       return this.user.menus[0].children ? true : false;
     },
   },
@@ -76,8 +93,7 @@ export default {
       this.$router.push("/login");
     },
   },
-  mounted() {
-  },
+  mounted() {},
 };
 </script>
 

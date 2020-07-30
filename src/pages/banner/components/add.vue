@@ -3,8 +3,8 @@
     <!-- Form -->
 
     <el-dialog :title="info.title" :visible.sync="info.show">
-      <el-form :model="form">
-        <el-form-item label="标题" :label-width="formLabelWidth">
+      <el-form :model="form" :rules="rules" ref="form" >
+        <el-form-item label="标题" :label-width="formLabelWidth" prop="title">
           <el-input v-model="form.title" autocomplete="off"></el-input>
         </el-form-item>
 
@@ -25,8 +25,8 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="cancel()">取 消</el-button>
-        <el-button type="primary" @click="add()" v-if="info.isAdd">添 加</el-button>
-        <el-button type="primary" v-else @click="updata">修 改</el-button>
+        <el-button type="primary" @click="add('form')" v-if="info.isAdd">添 加</el-button>
+        <el-button type="primary" v-else @click="updata('form')">修 改</el-button>
       </div>
     </el-dialog>
   </div>
@@ -57,6 +57,9 @@ export default {
         status: 1,
       },
       formLabelWidth: "120px",
+      rules: {
+        title: [{ required: true, message: "请输入标题", trigger: "blur" }],
+      },
     };
   },
   methods: {
@@ -82,7 +85,8 @@ export default {
       this.imgUrl = URL.createObjectURL(file); //生成一个URL地址 赋值给imageURL
       this.form.img = file;
     },
-    getDetail(id) {//获取一条数据
+    getDetail(id) {
+      //获取一条数据
       requestBannerDetail({ id: id }).then((res) => {
         this.form = res.data.list;
         this.form.id = id;
@@ -91,7 +95,7 @@ export default {
     },
 
     empty() {
-      this.form =  {
+      this.form = {
         title: "",
         img: null,
         status: 1,
@@ -103,27 +107,43 @@ export default {
       this.empty();
       this.info.isAdd = true;
     },
-    updata() {//修改
-      requestBannerUpdate(this.form).then((res) => {
-        if (res.data.code == 200) {
-          successAlert(res.data.msg);
-          this.empty();
-          this.cancel();
-          this.requestList();
+    updata(formName) {
+      //修改
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          requestBannerUpdate(this.form).then((res) => {
+            if (res.data.code == 200) {
+              successAlert(res.data.msg);
+              this.empty();
+              this.cancel();
+              this.requestList();
+            } else {
+              warningAlert(res.data.msg);
+            }
+          });
         } else {
-          warningAlert(res.data.msg);
+          console.log("error submit!!");
+          return false;
         }
       });
     },
-    add() {//添加
-      requestBannerAdd(this.form).then((res) => {
-        if (res.data.code == 200) {
-          successAlert(res.data.msg);
-          this.requestList();
-          this.info.show = false;
-          this.empty();
+    add(formName) {
+      //添加
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          requestBannerAdd(this.form).then((res) => {
+            if (res.data.code == 200) {
+              successAlert(res.data.msg);
+              this.requestList();
+              this.info.show = false;
+              this.empty();
+            } else {
+              warningAlert(res.data.msg);
+            }
+          });
         } else {
-          warningAlert(res.data.msg);
+          console.log("error submit!!");
+          return false;
         }
       });
     },

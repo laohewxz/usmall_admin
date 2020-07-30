@@ -20,7 +20,7 @@ export default {
     return {
       info: {
         show: false,
-        title:"管理员添加",
+        title:"商品添加",
         isAdd:true
       },
     };
@@ -28,13 +28,13 @@ export default {
   methods: {
     edit(id){//编辑管理员
       this.info.show=true;
-      this.info.title = '管理员编辑';
+      this.info.title = '商品编辑';
       this.info.isAdd=false;
       this.$refs.add.getDetail(id)
     },
     add() {//添加管理员
       this.info.show = true;
-      this.info.title = '管理员添加';
+      this.info.title = '商品添加';
       this.info.isAdd=true
     },
   },

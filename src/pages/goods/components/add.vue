@@ -1,8 +1,8 @@
 <template>
   <div class="add">
     <el-dialog :title="info.title" :visible.sync="info.show" @opened="createEditor">
-      <el-form :model="form">
-        <el-form-item label="一级分类" :label-width="formLabelWidth">
+      <el-form :model="form" :rules="rules" ref="form" >
+        <el-form-item label="一级分类" :label-width="formLabelWidth" prop="first_cateid">
           <el-select v-model="form.first_cateid" @change="changeFirstCateId()">
             <el-option label="--请选择--" value disabled></el-option>
             <el-option
@@ -13,7 +13,7 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="二级分类" :label-width="formLabelWidth">
+        <el-form-item label="二级分类" :label-width="formLabelWidth" prop="second_cateid">
           <el-select v-model="form.second_cateid">
             <el-option label="--请选择--" value disabled></el-option>
             <el-option
@@ -24,13 +24,13 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="商品名称" :label-width="formLabelWidth">
+        <el-form-item label="商品名称" :label-width="formLabelWidth" prop="goodsname">
           <el-input v-model="form.goodsname" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="价格" :label-width="formLabelWidth">
+        <el-form-item label="价格" :label-width="formLabelWidth" prop="price">
           <el-input v-model="form.price"></el-input>
         </el-form-item>
-        <el-form-item label="市场价格" :label-width="formLabelWidth">
+        <el-form-item label="市场价格" :label-width="formLabelWidth" prop="market_price">
           <el-input v-model="form.market_price"></el-input>
         </el-form-item>
 
@@ -46,7 +46,7 @@
           </el-upload>
         </el-form-item>
 
-        <el-form-item label="商品规格" :label-width="formLabelWidth">
+        <el-form-item label="商品规格" :label-width="formLabelWidth" prop="specsid">
           <el-select v-model="form.specsid" @change="changeSpecsId()">
             <el-option label="--请选择--" value disabled></el-option>
             <el-option
@@ -58,7 +58,7 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="规格属性" :label-width="formLabelWidth">
+        <el-form-item label="规格属性" :label-width="formLabelWidth" prop="specsattr">
           <el-select v-model="form.specsattr" multiple placeholder="请选择">
             <el-option v-for="item in attrsArr" :key="item" :label="item" :value="item"></el-option>
           </el-select>
@@ -83,8 +83,8 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="cancel()">取 消</el-button>
-        <el-button type="primary" @click="add" v-if="info.isAdd">添 加</el-button>
-        <el-button type="primary" v-else @click="update">修 改</el-button>
+        <el-button type="primary" @click="add('form')" v-if="info.isAdd">添 加</el-button>
+        <el-button type="primary" v-else @click="update('form')">修 改</el-button>
       </div>
     </el-dialog>
   </div>
@@ -123,6 +123,29 @@ export default {
         status: 1,
       },
       formLabelWidth: "120px",
+      rules: {
+        goodsname: [
+          { required: true, message: "请输入商品名称", trigger: "blur" },
+        ],
+        price: [
+          { required: true, message: "请输入价格", trigger: "blur" },
+        ],
+        market_price: [
+          { required: true, message: "请输入市场价格", trigger: "blur" },
+        ],
+        first_cateid: [
+            { required: true, message: '请选择一级分类', trigger: 'change' }
+          ],
+        second_cateid: [
+            { required: true, message: '请选择二级分类', trigger: 'change' }
+          ],
+        specsid: [
+            { required: true, message: '请选择商品规格', trigger: 'change' }
+          ],
+        specsattr: [
+            { required: true, message: '请选择规格属性', trigger: 'change' }
+          ],
+      },
     };
   },
   computed: {
@@ -136,7 +159,6 @@ export default {
       this.requestCateList();
     }
     this.requestSpecList(true);
-    // console.log(this.secondCaterArr,'pppppppppppppppppppppppppppppppppppppp')s
   },
   methods: {
     //修改了一级分类
@@ -188,7 +210,6 @@ export default {
         this.form.id = id;
         this.imageUrl = this.$imgPre + this.form.img;
         this.form.specsattr=JSON.parse(this.form.specsattr)
-        console.log(this.form.specsattr,'ooooooooooooooooooooooooooooooooooooooo')
         this.changeFirstCateId()
         this.changeSpecsId(true)
       });
@@ -216,7 +237,10 @@ export default {
     },
 
     //修改
-    update() {
+    update(formName) {
+      
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
       this.form.description = this.editor.txt.html();
       this.form.specsattr=JSON.stringify(this.form.specsattr)
       requestGoodsUpdate(this.form).then((res) => {
@@ -228,13 +252,19 @@ export default {
           warningAlert(res.data.msg);
         }
       });
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
     },
 
     //添加
-    add() {
+    add(formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
       this.form.description = this.editor.txt.html();
        this.form.specsattr = JSON.stringify(this.form.specsattr )
-       console.log(this.form,'pppppp')
       requestGoodsAdd(this.form).then((res) => {
         if (res.data.code == 200) {
           successAlert(res.data.msg);
@@ -245,6 +275,11 @@ export default {
           warningAlert(res.data.msg);
         }
       });
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
     },
     cancel() {
       //点击取消

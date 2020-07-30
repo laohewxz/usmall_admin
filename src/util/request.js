@@ -1,6 +1,7 @@
 import axios from "axios"
 import qs from "qs"
 import store from "../store"
+import {warningAlert} from "./alert"
 
 //请求拦截
 axios.interceptors.request.use(config => {
@@ -15,6 +16,11 @@ axios.interceptors.response.use(res => {
     console.group("本次路径：" + res.config.url)
     console.log(res)
     console.groupEnd()
+    if(res.data.msg==="登录已过期或访问权限受限"){
+        warningAlert("登录已过期或访问权限受限")
+        router.push("/login");
+        return;
+    }
     return res
 })
 

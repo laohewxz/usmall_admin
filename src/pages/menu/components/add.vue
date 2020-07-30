@@ -7,7 +7,7 @@
         <el-form-item label="菜单名称" :label-width="formLabelWidth" prop="title">
           <el-input v-model="form.title" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="上级菜单" :label-width="formLabelWidth">
+        <el-form-item label="上级菜单" :label-width="formLabelWidth" prop="pid" >
           <el-select v-model="form.pid" placeholder="请选择菜单">
             <el-option label="--请选择--" value aria-disabled></el-option>
             <el-option label="顶级菜单" :value="0"></el-option>
@@ -20,14 +20,14 @@
           <el-radio v-model="form.type" :label="1">目录</el-radio>
           <el-radio v-model="form.type" :label="2">菜单</el-radio>
         </el-form-item>
-        <el-form-item label="菜单图标" :label-width="formLabelWidth" v-if="form.type==1">
+        <el-form-item label="菜单图标" :label-width="formLabelWidth" v-if="form.type==1" prop="icon" >
           <el-select v-model="form.icon" placeholder="请选择菜单图标" :label-width="formLabelWidth">
             <el-option label="--请选择--" value aria-disabled></el-option>
             <el-option v-for="item in icon" :key="item" :label="item" :value="item"></el-option>
             <!-- 加数据 -->
           </el-select>
         </el-form-item>
-        <el-form-item label="菜单地址" label-width="120px" v-else>
+        <el-form-item label="菜单地址" label-width="120px" v-else  prop="url">
           <el-select v-model="form.url">
             <el-option label="--请选择--" value disabled></el-option>
             <el-option v-for="item in urls" :key="item" :label="item" :value="item"></el-option>
@@ -75,6 +75,7 @@ export default {
         "/menu",
         "/role",
         "/manage",
+         "/member",
         "/cate",
         "/spec",
         "/goods",
@@ -82,7 +83,7 @@ export default {
         "/seckill",
       ],
       form: {
-        pid: 0,
+        pid: '',
         title: "",
         icon: "",
         type: 1,
@@ -95,6 +96,15 @@ export default {
           { required: true, message: "请输入菜单名称", trigger: "blur" },
           { min: 3, max: 6, message: "长度在 3 到 6个字符", trigger: "blur" },
         ],
+         icon: [
+            { required: true, message: '请选择菜单图标', trigger: 'change' }
+          ],
+         pid: [
+            { required: true, message: '请选择上级菜单', trigger: 'change' }
+          ],
+         url: [
+            { required: true, message: '请选择菜单地址', trigger: 'change' }
+          ],
       },
     };
   },
